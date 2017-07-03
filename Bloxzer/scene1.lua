@@ -1238,7 +1238,7 @@ object:addEventListener( "touch", handleSwipe )
 	local function handleButtonEvent4( event )
 	 
 	    if ( "ended" == event.phase ) then
- 			composer.gotoScene( "Menu" )
+ 			composer.gotoScene( "Menu2" )
 	    end
 	end
 	 									

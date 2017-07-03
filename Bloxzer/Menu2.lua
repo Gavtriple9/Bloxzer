@@ -7,16 +7,22 @@ display.setStatusBar( display.HiddenStatusBar )
 local widget = require( "widget" )
 local composer = require ("composer")
 
+local physics = require( "physics" )
+
 CenterX = display.contentCenterX
 CenterY = display.contentCenterY
 Width = display.actualContentWidth
 Height = display.actualContentHeight
 
+physics.start()
+physics.setGravity( 0, 0 )
+physics.setDrawMode( "hybrid" )
 
 local value = 290
 local HighScore = 115
 local score = 20
-
+local rot = 0
+local exp = 50
 
 
 -- Make a game over menu with score, high score, restart button, home button, leaderboard button?, facebook button. Take time and make it look good.
@@ -37,6 +43,51 @@ function scene:create( event )
 
 
 
+    local gameOver = display.newText( "GAME OVER", CenterX, CenterY/2, "koliko-Bold.ttf", CenterX/4, CenterY/4 )
+    sceneGroup:insert(gameOver)
+
+
+
+
+		local function spawnBalls()
+	 
+	    	local ball = display.newCircle( 0, 0, 10 )
+	 		sceneGroup:insert( ball )
+
+	   	 	ball.x = math.random( 0, display.actualContentWidth )
+	    	ball.y = math.random( 0, display.actualContentHeight )
+
+	    	xVelocity = math.random( -200, 200 )
+	    	yVelocity = math.random( -200, 200 )
+
+	    	physics.addBody( ball, "dynamic", {bounce = 1} )
+	    	ball:setLinearVelocity( xVelocity, yVelocity )
+
+		end
+
+		timer.performWithDelay( 1, spawnBalls, 5 )
+
+
+	local wall1 = display.newRect( display.actualContentWidth, CenterY, 1, display.actualContentHeight )
+    sceneGroup:insert( wall1 )
+	physics.addBody( wall1, "static" )
+
+	local wall2 = display.newRect( 0, CenterY, 1, display.actualContentHeight )
+    sceneGroup:insert( wall2 )
+	physics.addBody( wall2, "static" )
+
+	local wall3 = display.newRect( CenterX, display.actualContentHeight/1.084, display.actualContentWidth, 1 )
+    sceneGroup:insert( wall3 )
+	physics.addBody( wall3, "static" )
+
+	local wall4 = display.newRect( CenterX, -44, display.actualContentWidth, 1  )
+    sceneGroup:insert( wall4 )
+	physics.addBody( wall4, "static" )
+
+
+
+
+
 
 
 	local function handleButtonEvent5( event )
@@ -49,10 +100,10 @@ function scene:create( event )
 
 	local shareButton = widget.newButton(
 	    {
-	        width = 75,
-	        height = 75,
-	        defaultFile = "Images/share.png",
-	        overFile = "Images/shareHOVER.png",
+	        width = 50,
+	        height = 50,
+	        defaultFile = "Images/home.png",
+	        overFile = "Images/homeHOVER.png",
 	        onEvent = handleButtonEvent5
 	    }
 	)
@@ -91,8 +142,8 @@ function scene:create( event )
         volumeButton.alpha = 0
 	end
 	-- Center the button
-	volumeButton.x = CenterX*1.24
-	volumeButton.y = CenterY/1.74
+	volumeButton.x = CenterX/5
+	volumeButton.y = 0
 	volumeButton.alpha = 1
 	sceneGroup:insert(volumeButton)
 
@@ -110,10 +161,10 @@ function scene:create( event )
 
 	local menuButton = widget.newButton(
 	    {
-	        width = 75,
-	        height = 75,
-	        defaultFile = "Images/HomeButton.png",
-	        overFile = "Images/HomeButtonHOVER.png",
+	        width = 50,
+	        height = 50,
+	        defaultFile = "Images/home.png",
+	        overFile = "Images/homeHOVER.png",
 	        onEvent = handleButtonEvent4
 	    }
 	)
@@ -139,10 +190,10 @@ function scene:create( event )
 
 	local retryButton = widget.newButton(
 	    {
-	        width = 130,
-	        height = 130/2,
-	        defaultFile = "Images/retry2.png",
-	        overFile = "Images/retry2HOVER.png",
+	        width = 50,
+	        height = 50,
+	        defaultFile = "Images/home.png",
+	        overFile = "Images/homeHOVER.png",
 	        onEvent = handleButtonEvent3
 	    }
 	)
@@ -179,10 +230,42 @@ function scene:create( event )
         leaderButton.alpha = 0
 	end
 	-- Center the button
-	leaderButton.x = CenterX*2.03 
-	leaderButton.y = CenterY/16
+	leaderButton.x = display.actualContentWidth/1.1
+	leaderButton.y = 0
 	leaderButton.alpha = 1
 	sceneGroup:insert( leaderButton )
+
+
+
+	local function Rotation()
+		function actRot()
+			rot = rot - 1
+		end
+		rotTimer = timer.performWithDelay( 10, actRot, -1 )
+		function updateRot()
+			retryButton.rotation = rot
+		end
+		rotUpdaterTimer = timer.performWithDelay( 10, updateRot, -1 )
+
+	end
+	Rotation()
+
+
+
+	local function Expand()
+		function actExp()
+			exp = exp + 1
+		end
+		expTimer = timer.performWithDelay( 10, actRot, -1 )
+		function updateRot()
+			shareButton:scale( exp, exp )
+		end
+		expUpdaterTimer = timer.performWithDelay( 10, updateRot, -1 )
+	end
+
+
+
+
 
 
 
